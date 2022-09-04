@@ -2,9 +2,13 @@
   "name": "number-system-converter",
   "displayName": "Number System Converter",
   "description": "Convert between number systems with a single keystroke",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "engines": {
     "vscode": "^1.71.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/frogstair/number-system-converter.git"
   },
   "categories": [
     "Other"
