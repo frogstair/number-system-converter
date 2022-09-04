@@ -10,14 +10,22 @@
     "Other"
   ],
   "activationEvents": [
-    "onCommand:number-system-converter.helloWorld"
+    "*"
   ],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
       {
-        "command": "number-system-converter.helloWorld",
-        "title": "Hello World"
+        "command": "number-system-converter.toHex",
+        "title": "Convert selection to hex"
+      },
+      {
+        "command": "number-system-converter.toBin",
+        "title": "Convert selection to binary"
+      },
+      {
+        "command": "number-system-converter.toDec",
+        "title": "Convert selection to decimal"
       }
     ]
   },
