@@ -16,31 +16,43 @@ export function activate({ subscriptions }: vscode.ExtensionContext) {
 		if (editor === undefined) {
 			return;
 		}
-		const sel = editor.selection;
-		let text = editor.document.getText(sel);
-		if (text.length === 0) {
-			return;
-		}
-		let num = 0;
-		if (text.startsWith("0x")) {
-			return;
-		}
-		else if (text.startsWith("0b")) {
-			text = text.slice("0b".length);
-			num = parseInt(text, 2);
-			if (isNaN(num)) {
-				vscode.window.showErrorMessage("Not a valid number!");
+		const sels = editor.selections;
+		const numbers: Number[] = [];
+		const ignore: Number[] = [];
+		sels.forEach((sel, i) => {
+			let text = editor.document.getText(sel);
+			if (text.length === 0) {
+				ignore.push(i);
+				numbers.push(0);
 				return;
 			}
-		} else {
-			num = parseInt(text, 10);
-			if (isNaN(num)) {
-				vscode.window.showErrorMessage("Not a valid number!");
+			let num = 0;
+			if (text.startsWith("0x")) {
+				ignore.push(i);
+				numbers.push(0);
 				return;
 			}
-		}
+			else if (text.startsWith("0b")) {
+				text = text.slice("0b".length);
+				num = parseInt(text, 2);
+			} else {
+				num = parseInt(text, 10);
+			}
+			if (isNaN(num)) {
+				vscode.window.showErrorMessage("Not a valid number on line " + (sel.start.line + 1) + "!");
+				ignore.push(i);
+				numbers.push(0);
+				return;
+			}
+			numbers.push(num);
+		});
 		editor.edit((builder) => {
-			builder.replace(sel, "0x" + num.toString(16));
+			numbers.forEach((num, i) => {
+				if (ignore.includes(i)) {
+					return;
+				}
+				builder.replace(sels[i], "0x" + num.toString(16));
+			});
 		});
 	}));
 
@@ -49,31 +61,43 @@ export function activate({ subscriptions }: vscode.ExtensionContext) {
 		if (editor === undefined) {
 			return;
 		}
-		const sel = editor.selection;
-		let text = editor.document.getText(sel);
-		if (text.length === 0) {
-			return;
-		}
-		let num = 0;
-		if (text.startsWith("0b")) {
-			return;
-		}
-		else if (text.startsWith("0x")) {
-			text = text.slice("0x".length);
-			num = parseInt(text, 16);
-			if (isNaN(num)) {
-				vscode.window.showErrorMessage("Not a valid number!");
+		const sels = editor.selections;
+		const numbers: Number[] = [];
+		const ignore: Number[] = [];
+		sels.forEach((sel, i) => {
+			let text = editor.document.getText(sel);
+			if (text.length === 0) {
+				ignore.push(i);
+				numbers.push(0);
 				return;
 			}
-		} else {
-			num = parseInt(text, 10);
-			if (isNaN(num)) {
-				vscode.window.showErrorMessage("Not a valid number!");
+			let num = 0;
+			if (text.startsWith("0b")) {
+				ignore.push(i);
+				numbers.push(0);
 				return;
 			}
-		}
+			else if (text.startsWith("0x")) {
+				text = text.slice("0x".length);
+				num = parseInt(text, 16);
+			} else {
+				num = parseInt(text, 10);
+			}
+			if (isNaN(num)) {
+				vscode.window.showErrorMessage("Not a valid number on line " + (sel.start.line + 1) + "!");
+				ignore.push(i);
+				numbers.push(0);
+				return;
+			}
+			numbers.push(num);
+		});
 		editor.edit((builder) => {
-			builder.replace(sel, "0b" + num.toString(2));
+			numbers.forEach((num, i) => {
+				if (ignore.includes(i)) {
+					return;
+				}
+				builder.replace(sels[i], "0b" + num.toString(2));
+			});
 		});
 	}));
 
@@ -82,36 +106,42 @@ export function activate({ subscriptions }: vscode.ExtensionContext) {
 		if (editor === undefined) {
 			return;
 		}
-		const sel = editor.selection;
-		let text = editor.document.getText(sel);
-		if (text.length === 0) {
-			return;
-		}
-		let num = parseInt(text, 10);
-		if (isNaN(num)) {
-			vscode.window.showErrorMessage("Not a valid number!");
-			return;
-		}
-		if (!text.startsWith("0b") && !text.startsWith("0x")) {
-			return;
-		}
-		else if (text.startsWith("0x")) {
-			text = text.slice("0x".length);
-			num = parseInt(text, 16);
-			if (isNaN(num)) {
-				vscode.window.showErrorMessage("Not a valid number!");
+		const sels = editor.selections;
+		const numbers: Number[] = [];
+		const ignore: Number[] = [];
+		sels.forEach((sel, i) => {
+			let text = editor.document.getText(sel);
+			if (text.length === 0) {
+				ignore.push(i);
+				numbers.push(0);
 				return;
 			}
-		} else if (text.startsWith("0b")) {
-			text = text.slice("0b".length);
-			num = parseInt(text, 2);
+			let num = 0;
+			if (text.startsWith("0b")) {
+				text = text.slice("0b".length);
+				num = parseInt(text, 2);
+			}
+			else if (text.startsWith("0x")) {
+				text = text.slice("0x".length);
+				num = parseInt(text, 16);
+			} else {
+				num = parseInt(text, 10);
+			}
 			if (isNaN(num)) {
-				vscode.window.showErrorMessage("Not a valid number!");
+				vscode.window.showErrorMessage("Not a valid number on line " + (sel.start.line + 1) + "!");
+				ignore.push(i);
+				numbers.push(0);
 				return;
 			}
-		}
+			numbers.push(num);
+		});
 		editor.edit((builder) => {
-			builder.replace(sel, num.toString());
+			numbers.forEach((num, i) => {
+				if (ignore.includes(i)) {
+					return;
+				}
+				builder.replace(sels[i], num.toString(10));
+			});
 		});
 	}));
 
