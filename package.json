@@ -1,8 +1,9 @@
 {
   "name": "number-system-converter",
   "displayName": "Number System Converter",
+  "publisher": "frogstair",
   "description": "Convert between number systems with a single keystroke",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "engines": {
     "vscode": "^1.71.0"
   },
